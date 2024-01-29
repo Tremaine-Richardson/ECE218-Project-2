@@ -9,8 +9,8 @@
 
 
 #define TIME_INCREMENT_MS                       10
-#define HEADLIGHT_ON_DELAY 			            1000
-#define HEADLIGHT_OFF_DELAY			            2000
+#define HEADLIGHT_ON_DELAY 			        1000
+#define HEADLIGHT_OFF_DELAY			        2000
 #define DEBOUNCE_BUTTON_TIME_MS                 40
 #define HEADLIGHT_OFF_THRESHOLD                 .3
 #define HEADLIGHT_ON_THRESHOLD                  .6
