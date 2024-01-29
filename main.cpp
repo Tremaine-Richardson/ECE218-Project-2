@@ -105,7 +105,7 @@ void outputsInit()
 
 void ignitionStateUpdate()
 {
-    bool ignitionSwitch = ignitionSwitchUpdate();
+    bool ignitionSwitch = ignitionSwitchUpdate(); //Sets ignitionSwitch to ON when the button is released
    if( driverSeat && ignitionSwitch ) {
      if(!engineRunning){
          // Start the engine
@@ -132,39 +132,39 @@ void headlightStateUpdate()
     lightSensorReading = lightSensor.read();
     if ( engineRunning ) {
         if ( potentiometerReading > HEADLIGHT_OFF_THRESHOLD ) {  
-            if ( potentiometerReading < HEADLIGHT_ON_THRESHOLD ) {  //Mode is AUTO
+            if ( potentiometerReading < HEADLIGHT_ON_THRESHOLD ) {  //Mode is AUTO since potentiometer is between ON and OFF
                  accumulatedTimeDelay = accumulatedTimeDelay + TIME_INCREMENT_MS;
                 if ( lightSensorReading > DUSK_THRESHOLD ) {
                     if ( lightSensorReading < DAYLIGHT_THRESHOLD ) { //Neither Daylight or Dusk
-                        accumulatedTimeDelay = 0;
+                        accumulatedTimeDelay = 0; //Does not change headlight state and resets the delay
                     }
-                    else { //Daylight
-                        if ( accumulatedTimeDelay >= HEADLIGHT_OFF_DELAY) {
+                    else { //Daylight since light sensor reading is above the daylight threshold
+                        if ( accumulatedTimeDelay >= HEADLIGHT_OFF_DELAY) { //Counts up to 2s using 10ms increments
                         rightHeadlight = OFF;
                         leftHeadlight = OFF;
                         }
                     }
                 }
-                else { //Dusk
-                    if (accumulatedTimeDelay >= HEADLIGHT_ON_DELAY) {
+                else { //Dusk since light sensor reading is below the dusk threshold
+                    if (accumulatedTimeDelay >= HEADLIGHT_ON_DELAY) { //Counts up to 1s using 10 ms increments
                         rightHeadlight = ON;
                         leftHeadlight = ON;
                     }
                 }
             }
-            else { //Mode is ON
-                accumulatedTimeDelay = 0;
+            else { //Mode is ON since potentiometer is above ON threshold
+                accumulatedTimeDelay = 0; //Keeps delay time 0
                 rightHeadlight = ON;
                 leftHeadlight = ON;
              }
     }
-    else { //Mode is OFF
-            accumulatedTimeDelay = 0;
+    else { //Mode is OFF since potentiometer is below OFF threshold
+            accumulatedTimeDelay = 0; //Keeps delay time to 0
             rightHeadlight = OFF;
             leftHeadlight = OFF;
         }
     }
-    else {
+    else { //For when the engine is not running
         rightHeadlight = OFF;
         leftHeadlight = OFF;
     }
@@ -172,9 +172,9 @@ void headlightStateUpdate()
 
 void ignitionSwitchInit()
 {
-    if( ignitionSwitch == 1) {
+    if( ignitionSwitch == 1) { //Sets initial state of FSM to BUTTON_UP if the button is not pressed
         ignitionSwitchState = BUTTON_UP;
-    } else {
+    } else { //Sets intial state of FSM to BUTTON_DOWN if button is pressed
         ignitionSwitchState = BUTTON_DOWN;
     }
 }
@@ -187,7 +187,7 @@ bool ignitionSwitchUpdate()
 
 
     case BUTTON_UP:
-        if( ignitionSwitch == 0 ) {
+        if( ignitionSwitch == 0 ) { //Sets the state to BUTTON_FALLING is the button was up and is now down
             ignitionSwitchState = BUTTON_FALLING;
             accumulatedDebounceButtonTime = 0;
         }
@@ -195,10 +195,10 @@ bool ignitionSwitchUpdate()
 
 
     case BUTTON_FALLING:
-        if( accumulatedDebounceButtonTime >= DEBOUNCE_BUTTON_TIME_MS ) {
-            if( ignitionSwitch == 0 ) {
+        if( accumulatedDebounceButtonTime >= DEBOUNCE_BUTTON_TIME_MS ) { //Delays for debouncing
+            if( ignitionSwitch == 0 ) { //Sets state to BUTTON_DOWN if button is still down after debounce time
                 ignitionSwitchState = BUTTON_DOWN;
-            } else {
+            } else { //Sets state back to BUTTON_UP if button is up after debounce time
                 ignitionSwitchState = BUTTON_UP;
             }
         }
@@ -207,7 +207,7 @@ bool ignitionSwitchUpdate()
 
 
     case BUTTON_DOWN:
-        if( ignitionSwitch == 1 ) {
+        if( ignitionSwitch == 1 ) { //Sets state to BUTTON_RISING if button was down and is now up
             ignitionSwitchState = BUTTON_RISING;
             accumulatedDebounceButtonTime = 0;
         }
@@ -215,11 +215,11 @@ bool ignitionSwitchUpdate()
 
 
     case BUTTON_RISING:
-        if( accumulatedDebounceButtonTime >= DEBOUNCE_BUTTON_TIME_MS ) {
-            if( ignitionSwitch == 1 ) {
+        if( accumulatedDebounceButtonTime >= DEBOUNCE_BUTTON_TIME_MS ) { //Delays for debouncing
+            if( ignitionSwitch == 1 ) { //Sets state to BUTTON_UP if button is still up after debouncing time
                 ignitionSwitchState = BUTTON_UP;
-                ignitionSwitchReleasedEvent = true;
-            } else {
+                ignitionSwitchReleasedEvent = true; //Indicates that the button has been released
+            } else { //Sets state back to BUTTON_DOWN if after debouncing time it is still down
                 ignitionSwitchState = BUTTON_DOWN;
             }
         }
@@ -229,8 +229,8 @@ bool ignitionSwitchUpdate()
 
 
     default:
-        ignitionSwitchInit();
+        ignitionSwitchInit(); //Initializes button state for the ignition button
         break;
     }
-    return ignitionSwitchReleasedEvent;
+    return ignitionSwitchReleasedEvent; //Returns false if the button has not been released, true if it has been released
 }
