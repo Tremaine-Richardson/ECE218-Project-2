@@ -10,8 +10,9 @@ the driver seat sensor must be activated by pressing the button, and then the ig
 can leave the seat, or by letting go of the button, and the engine will remain on. Once the engine is on, the headlight system can be activated. There are
 three headlight modes, ON, OFF, and AUTO. If ON is selected, the two headlight LEDs simply turn on. If OFF is selected. the two headlight LEDs will turn off.
 If AUTO is selected, we use the light sensor to determine what should happen. If the light sensor determines that it is dark and the headlight LEDs are off,
-they will automatically turn on after 1 second. If it is bright and a lot of light on the sensor and the LEDs are on, they will turn off after 2 seconds. And
-then to turn off the engine, the ignition button just needs to be pressed and released again. 
+they will automatically turn on after 1 second. If it is bright and a lot of light on the sensor and the LEDs are on, they will turn off after 2 seconds. If
+it senses that the light level is somewhere in between, then the headlights will stay in whatever state they were in previously. And then to turn off the engine,
+the ignition button just needs to be pressed and released again. 
 
 Starting Repository:
 https://github.com/Tremaine-Richardson/example_4-1-new
